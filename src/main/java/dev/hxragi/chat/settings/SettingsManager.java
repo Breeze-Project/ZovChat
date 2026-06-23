@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 
-import dev.hxragi.chat.config.ChatSettings;
+import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.database.DatabaseManager;
 
 public class SettingsManager {

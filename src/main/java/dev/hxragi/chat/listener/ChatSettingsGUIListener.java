@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import dev.hxragi.chat.config.ChatSettings;
+import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.gui.ChatSettingsGUI;
 import dev.hxragi.chat.settings.SettingsManager;
 

@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import dev.hxragi.chat.config.ChatSettings;
+import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.settings.SettingsManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

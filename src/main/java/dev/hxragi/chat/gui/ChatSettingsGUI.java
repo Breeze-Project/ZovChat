@@ -11,7 +11,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.hxragi.chat.config.ChatSettings;
+import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.settings.SettingsManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

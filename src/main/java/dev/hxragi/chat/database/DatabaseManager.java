@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import dev.hxragi.chat.config.ChatSettings;
+import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 
 public class DatabaseManager {

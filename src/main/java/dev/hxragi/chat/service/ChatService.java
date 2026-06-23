@@ -8,7 +8,7 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import dev.hxragi.chat.config.ChatSettings;
+import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.dto.FormattedMessage;
 import dev.hxragi.chat.settings.SettingsManager;
