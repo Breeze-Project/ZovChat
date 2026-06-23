@@ -1,0 +1,21 @@
+chat:
+  globalPrefix: "<green>• "
+  localPrefix: "<red>• "
+
+  globalSymbol: "!"
+  localChatRadius: 128
+
+  globalSenderNameColor: "<gray>"
+  localSenderNameColor: "<gray>"
+
+  globalMessageColor: "<white>"
+  localMessageColor: "<white>"
+
+  separatorColor: "<gray>"
+
+mention:
+  color: "<gold>"
+
+database: 
+  url: "database.db"
+  poolSize: 10
