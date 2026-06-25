@@ -12,6 +12,7 @@ import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.dto.FormattedMessage;
 import dev.hxragi.chat.settings.SettingsManager;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -58,8 +59,20 @@ public class ChatService {
   }
 
   public Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
+    String lpPrefix = parsePlaceholders(sender, "%luckperms-prefix%");
+    String ccbTag = parsePlaceholders(sender, "%ccb_tag%");
+
+    if (!lpPrefix.isEmpty() && !lpPrefix.endsWith(" ")) {
+      lpPrefix = " ";
+    }
+    if (!ccbTag.isEmpty() && !ccbTag.startsWith(" ")) {
+      ccbTag = " " + ccbTag;
+    }
+
     String prefixStr = isGlobal ? configManager.globalPrefix : configManager.localPrefix;
-    Component prefix = miniMessage.deserialize(prefixStr);
+    String senderNameColor = isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor;
+
+    String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + prefixStr + "<reset>" + ccbTag;
 
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
     long hours = ticks / 20 / 3600;
@@ -67,9 +80,7 @@ public class ChatService {
     Component hoverText = Component.text().append(Component.text("Наиграно: ", NamedTextColor.GRAY))
         .append(Component.text(hours + "ч", NamedTextColor.GRAY)).build();
 
-    String senderNameColor = isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor;
-
-    Component senderName = miniMessage.deserialize(senderNameColor + sender.getName())
+    Component senderName = miniMessage.deserialize(combinedStr)
         .hoverEvent(HoverEvent.showText(hoverText))
         .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "));
 
@@ -78,8 +89,11 @@ public class ChatService {
 
     Component separator = miniMessage.deserialize(configManager.separatorColor + ": ");
 
-    return prefix.append(senderName).append(separator)
-        .append(messageColor.append(message));
+    return senderName.append(separator).append(messageColor.append(message));
+  }
+
+  private String parsePlaceholders(Player player, String text) {
+    return PlaceholderAPI.setPlaceholders(player, text);
   }
 
   public void broadcastMessage(Player sender, Component message, boolean isGlobal) {

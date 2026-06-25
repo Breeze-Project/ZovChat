@@ -4,3 +4,9 @@ main: dev.hxragi.chat.ZovChat
 description: ZOV SVO RUSSIA THE BEST
 api-version: "1.21.11"
 loader: dev.hxragi.chat.ZovChatLoader
+
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
