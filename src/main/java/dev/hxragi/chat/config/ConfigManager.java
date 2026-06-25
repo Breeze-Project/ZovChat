@@ -4,8 +4,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ConfigManager {
-  public final String globalPrefix;
-  public final String localPrefix;
   public final String globalSymbol;
   public final int localRadius;
 
@@ -26,8 +24,6 @@ public class ConfigManager {
     plugin.saveDefaultConfig();
     FileConfiguration config = plugin.getConfig();
 
-    this.globalPrefix = config.getString("chat.globalPrefix");
-    this.localPrefix = config.getString("chat.localPrefix");
     this.globalSymbol = config.getString("chat.globalSymbol");
     this.localRadius = config.getInt("chat.localChatRadius");
 

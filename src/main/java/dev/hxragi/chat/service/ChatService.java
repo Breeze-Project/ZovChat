@@ -69,10 +69,9 @@ public class ChatService {
       ccbTag = " " + ccbTag;
     }
 
-    String prefixStr = isGlobal ? configManager.globalPrefix : configManager.localPrefix;
     String senderNameColor = isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor;
 
-    String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + prefixStr + "<reset>" + ccbTag;
+    String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
 
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
     long hours = ticks / 20 / 3600;

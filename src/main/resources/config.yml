@@ -1,7 +1,4 @@
 chat:
-  globalPrefix: "<green>• "
-  localPrefix: "<red>• "
-
   globalSymbol: "!"
   localChatRadius: 128
 
