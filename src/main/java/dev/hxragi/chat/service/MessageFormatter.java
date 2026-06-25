@@ -109,7 +109,7 @@ public class MessageFormatter {
   }
 
   private Component createMentionComponent(Player target) {
-    return Component.text(configManager.mentionColor + "@" + target.getName())
+    return miniMessage.deserialize(configManager.mentionColor + "@" + target.getName())
         .hoverEvent(HoverEvent.showText(Component.text("Онлайн: " + target.getName())))
         .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "));
   }
