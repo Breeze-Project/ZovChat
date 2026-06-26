@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.dto.FormattedMessage;
+import dev.hxragi.chat.util.LegacyConverter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -25,7 +26,7 @@ public class MessageFormatter {
   private static final int PING_LOW_THRESHOLD = 100;
   private static final int PING_MEDIUM_THRESHOLD = 200;
 
-  private final MiniMessage miniMessage = MiniMessage.miniMessage();
+  private final MiniMessage miniMessage = MiniMessage.builder().strict(false).build();
   private final ConfigManager configManager;
 
   public MessageFormatter(ConfigManager configManager) {
@@ -74,7 +75,7 @@ public class MessageFormatter {
       }
     }
 
-    String finalString = processedContent.toString().trim();
+    String finalString = LegacyConverter.convert(processedContent.toString().trim());
 
     Component message = miniMessage.deserialize(finalString, itemResolver, pingResolver, locResolver, mentionResolver);
     return new FormattedMessage(message, List.copyOf(mentionedPlayers));
@@ -109,7 +110,8 @@ public class MessageFormatter {
   }
 
   private Component createMentionComponent(Player target) {
-    return miniMessage.deserialize(configManager.mentionColor + "@" + target.getName())
+    String mentionColor = LegacyConverter.convert(configManager.mentionColor);
+    return miniMessage.deserialize(mentionColor + "@" + target.getName())
         .hoverEvent(HoverEvent.showText(Component.text("Онлайн: " + target.getName())))
         .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "));
   }

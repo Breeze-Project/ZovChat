@@ -12,6 +12,7 @@ import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.dto.FormattedMessage;
 import dev.hxragi.chat.settings.SettingsManager;
+import dev.hxragi.chat.util.LegacyConverter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -25,7 +26,7 @@ public class ChatService {
   private final MessageFormatter messageFormatter;
   private final ConfigManager configManager;
   private final SettingsManager settingsManager;
-  private final MiniMessage miniMessage = MiniMessage.miniMessage();
+  private final MiniMessage miniMessage = MiniMessage.builder().strict(false).build();
 
   public ChatService(JavaPlugin plugin, MessageFormatter messageFormatter, ConfigManager configManager,
       SettingsManager settingsManager) {
@@ -63,7 +64,7 @@ public class ChatService {
     String ccbTag = parsePlaceholders(sender, "%ccb_tag%");
 
     if (!lpPrefix.isEmpty() && !lpPrefix.endsWith(" ")) {
-      lpPrefix = " ";
+      lpPrefix = lpPrefix + " ";
     }
     if (!ccbTag.isEmpty() && !ccbTag.startsWith(" ")) {
       ccbTag = " " + ccbTag;
@@ -72,6 +73,10 @@ public class ChatService {
     String senderNameColor = isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor;
 
     String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
+
+    lpPrefix = LegacyConverter.convert(lpPrefix);
+    ccbTag = LegacyConverter.convert(ccbTag);
+    senderNameColor = LegacyConverter.convert(senderNameColor);
 
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
     long hours = ticks / 20 / 3600;
