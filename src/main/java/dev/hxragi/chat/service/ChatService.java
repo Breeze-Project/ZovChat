@@ -14,6 +14,8 @@ import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.dto.FormattedMessage;
 import dev.hxragi.chat.settings.SettingsManager;
 import dev.hxragi.chat.util.LegacyConverter;
+import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.util.DiscordUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -110,12 +112,21 @@ public class ChatService {
 
   private void broadcastMessage(Player sender, Component message, boolean isGlobal) {
     Bukkit.getConsoleSender().sendMessage(message);
+
     for (Player recipient : Bukkit.getOnlinePlayers()) {
       ChatSettings recipientSettings = settingsManager.getSettings(recipient.getUniqueId());
       boolean canSee = isGlobal ? recipientSettings.showGlobalChat() : recipientSettings.showLocalChat();
 
       if (canSee && (isGlobal || isInRange(sender, recipient))) {
         recipient.sendMessage(message);
+      }
+    }
+
+    if (isGlobal) {
+      if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
+        String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
+
+        DiscordUtil.sendMessage(DiscordSRV.getPlugin().getMainTextChannel(), plainMessage);
       }
     }
   }
