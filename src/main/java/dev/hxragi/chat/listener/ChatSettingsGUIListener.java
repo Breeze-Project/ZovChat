@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.gui.ChatSettingsGUI;
+import dev.hxragi.chat.gui.SettingsInventoryHolder;
 import dev.hxragi.chat.settings.SettingsManager;
 
 public class ChatSettingsGUIListener implements Listener {
@@ -21,29 +22,27 @@ public class ChatSettingsGUIListener implements Listener {
     if (!(event.getWhoClicked() instanceof Player player)) {
       return;
     }
-    if (!ChatSettingsGUI.isSettingsInventory(event.getView())) {
+    if (!(event.getInventory().getHolder() instanceof SettingsInventoryHolder)) {
       return;
     }
 
     event.setCancelled(true);
     int slot = event.getSlot();
-    if (slot == 8) {
+
+    if (slot == ChatSettingsGUI.SLOT_CLOSE) {
       player.closeInventory();
       return;
     }
-    if (slot < 0 || slot > 3)
+    if (slot < 0 || slot > ChatSettingsGUI.SLOT_GLOBAL_CHAT) {
       return;
+    }
 
     ChatSettings current = settingsManager.getSettings(player.getUniqueId());
     ChatSettings updated = switch (slot) {
-      case 0 -> new ChatSettings(current.playerId(), !current.allowPrivateMessages(), current.playerMentionSound(),
-          current.showLocalChat(), current.showGlobalChat());
-      case 1 -> new ChatSettings(current.playerId(), current.allowPrivateMessages(), !current.playerMentionSound(),
-          current.showLocalChat(), current.showGlobalChat());
-      case 2 -> new ChatSettings(current.playerId(), current.allowPrivateMessages(), current.playerMentionSound(),
-          !current.showLocalChat(), current.showGlobalChat());
-      case 3 -> new ChatSettings(current.playerId(), current.allowPrivateMessages(), current.playerMentionSound(),
-          current.showLocalChat(), !current.showGlobalChat());
+      case ChatSettingsGUI.SLOT_ALLOW_PM -> current.withAllowPrivateMessages(!current.allowPrivateMessages());
+      case ChatSettingsGUI.SLOT_MENTION_SOUND -> current.withPlayerMentionSound(!current.playerMentionSound());
+      case ChatSettingsGUI.SLOT_LOCAL_CHAT -> current.withShowLocalChat(!current.showLocalChat());
+      case ChatSettingsGUI.SLOT_GLOBAL_CHAT -> current.withShowGlobalChat(!current.showGlobalChat());
       default -> current;
     };
 

@@ -1,43 +1,29 @@
 package dev.hxragi.chat.config;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ConfigManager {
-  public final String globalSymbol;
-  public final int localRadius;
-
-  public final String globalSenderNameColor;
-  public final String localSenderNameColor;
-
-  public final String globalMessageColor;
-  public final String localMessageColor;
-
-  public final String separatorColor;
-
-  public final String mentionColor;
-
-  public final String databaseUrl;
-  public final int poolSize;
-
+public record ConfigManager(
+    String globalSymbol,
+    int localRadius,
+    String globalSenderNameColor,
+    String localSenderNameColor,
+    String globalMessageColor,
+    String localMessageColor,
+    String separatorColor,
+    String mentionColor,
+    String databaseUrl,
+    int poolSize) {
   public ConfigManager(JavaPlugin plugin) {
-    plugin.saveDefaultConfig();
-    FileConfiguration config = plugin.getConfig();
-
-    this.globalSymbol = config.getString("chat.globalSymbol");
-    this.localRadius = config.getInt("chat.localChatRadius");
-
-    this.globalSenderNameColor = config.getString("chat.globalSenderNameColor");
-    this.localSenderNameColor = config.getString("chat.localSenderNameColor");
-
-    this.localMessageColor = config.getString("chat.localMessageColor");
-    this.globalMessageColor = config.getString("chat.globalMessageColor");
-
-    this.separatorColor = config.getString("chat.separatorColor");
-
-    this.mentionColor = config.getString("mention.color");
-
-    this.databaseUrl = config.getString("database.url");
-    this.poolSize = config.getInt("database.poolSize");
+    this(
+        plugin.getConfig().getString("chat.globalSymbol"),
+        plugin.getConfig().getInt("chat.localChatRadius"),
+        plugin.getConfig().getString("chat.globalSenderNameColor"),
+        plugin.getConfig().getString("chat.localSenderNameColor"),
+        plugin.getConfig().getString("chat.globalMessageColor"),
+        plugin.getConfig().getString("chat.localMessageColor"),
+        plugin.getConfig().getString("chat.separatorColor"),
+        plugin.getConfig().getString("mention.color"),
+        plugin.getConfig().getString("database.url"),
+        plugin.getConfig().getInt("database.poolSize"));
   }
 }
