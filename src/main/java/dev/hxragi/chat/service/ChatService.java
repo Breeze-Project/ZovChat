@@ -70,28 +70,31 @@ public class ChatService {
       ccbTag = " " + ccbTag;
     }
 
-    String senderNameColor = isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor;
-
-    String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
-
     lpPrefix = LegacyConverter.convert(lpPrefix);
     ccbTag = LegacyConverter.convert(ccbTag);
-    senderNameColor = LegacyConverter.convert(senderNameColor);
+    String senderNameColor = LegacyConverter.convert(
+        isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor);
+
+    String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
 
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
     long hours = ticks / 20 / 3600;
 
-    Component hoverText = Component.text().append(Component.text("Наиграно: ", NamedTextColor.GRAY))
-        .append(Component.text(hours + "ч", NamedTextColor.GRAY)).build();
+    Component hoverText = Component.text()
+        .append(Component.text("Наиграно: ", NamedTextColor.GRAY))
+        .append(Component.text(hours + "ч", NamedTextColor.GRAY))
+        .build();
 
     Component senderName = miniMessage.deserialize(combinedStr)
         .hoverEvent(HoverEvent.showText(hoverText))
         .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "));
 
-    String messageColorStr = isGlobal ? configManager.globalMessageColor : configManager.localMessageColor;
+    String messageColorStr = LegacyConverter.convert(
+        isGlobal ? configManager.globalMessageColor : configManager.localMessageColor);
     Component messageColor = miniMessage.deserialize(messageColorStr);
 
-    Component separator = miniMessage.deserialize(configManager.separatorColor + ": ");
+    Component separator = miniMessage.deserialize(
+        LegacyConverter.convert(configManager.separatorColor) + ": ");
 
     return senderName.append(separator).append(messageColor.append(message));
   }
