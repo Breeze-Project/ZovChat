@@ -1,13 +1,11 @@
 package dev.hxragi.chat.gui;
 
-import java.net.http.WebSocket.Listener;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -16,33 +14,42 @@ import dev.hxragi.chat.settings.SettingsManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class ChatSettingsGUI {
   private static final String TITLE = "Настройки чата";
 
+  public static final int INVENTORY_SIZE = 9;
+  public static final int SLOT_ALLOW_PM = 0;
+  public static final int SLOT_MENTION_SOUND = 1;
+  public static final int SLOT_LOCAL_CHAT = 2;
+  public static final int SLOT_GLOBAL_CHAT = 3;
+  public static final int SLOT_CLOSE = 8;
+
   public static void open(Player player, SettingsManager settingsManager) {
-    Inventory inv = Bukkit.createInventory(null, 9, Component.text(TITLE));
+    Inventory inv = Bukkit.createInventory(new SettingsInventoryHolder(), INVENTORY_SIZE, Component.text(TITLE));
     ChatSettings settings = settingsManager.getSettings(player.getUniqueId());
 
-    inv.setItem(0, createToggleItem(Material.NAME_TAG, "Личные сообщения", settings.allowPrivateMessages()));
-    inv.setItem(1, createToggleItem(Material.NOTE_BLOCK, "Звук упоминания", settings.playerMentionSound()));
-    inv.setItem(2, createToggleItem(Material.COMPASS, "Локальный чат", settings.showLocalChat()));
-    inv.setItem(3, createToggleItem(Material.ENDER_PEARL, "Глобальный чат", settings.showGlobalChat()));
+    inv.setItem(SLOT_ALLOW_PM,
+        createToggleItem(Material.NAME_TAG, "Личные сообщения", settings.allowPrivateMessages()));
+    inv.setItem(SLOT_MENTION_SOUND,
+        createToggleItem(Material.NOTE_BLOCK, "Звук упоминания", settings.playerMentionSound()));
+    inv.setItem(SLOT_LOCAL_CHAT, createToggleItem(Material.COMPASS, "Локальный чат", settings.showLocalChat()));
+    inv.setItem(SLOT_GLOBAL_CHAT, createToggleItem(Material.ENDER_PEARL, "Глобальный чат", settings.showGlobalChat()));
 
-    inv.setItem(8, createCloseItem());
+    inv.setItem(SLOT_CLOSE, createCloseItem());
 
     player.openInventory(inv);
   }
 
   private static ItemStack createToggleItem(Material material, String name, boolean enabled) {
-    ItemStack item = new ItemStack(enabled ? Material.LIME_DYE : Material.GRAY_DYE);
+    ItemStack item = new ItemStack(material);
     ItemMeta meta = item.getItemMeta();
-    meta.displayName(Component.text(name, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+
+    NamedTextColor statusColor = enabled ? NamedTextColor.GREEN : NamedTextColor.RED;
+    meta.displayName(Component.text(name, statusColor).decoration(TextDecoration.ITALIC, false));
 
     Component statusText = Component.text("Статус: ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)
-        .append(enabled ? Component.text("ВКЛ", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)
-            : Component.text("ВЫКЛ", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
+        .append(Component.text(enabled ? "ВКЛ" : "ВЫКЛ", statusColor).decoration(TextDecoration.ITALIC, false));
     Component actionText = Component.text("Нажмите чтобы переключить", NamedTextColor.YELLOW)
         .decoration(TextDecoration.ITALIC, false);
 
@@ -51,15 +58,11 @@ public class ChatSettingsGUI {
     return item;
   }
 
-  public static ItemStack createCloseItem() {
+  private static ItemStack createCloseItem() {
     ItemStack item = new ItemStack(Material.BARRIER);
     ItemMeta meta = item.getItemMeta();
     meta.displayName(Component.text("Закрыть", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
     item.setItemMeta(meta);
     return item;
-  }
-
-  public static boolean isSettingsInventory(InventoryView view) {
-    return view != null && TITLE.equals(PlainTextComponentSerializer.plainText().serialize(view.title()));
   }
 }

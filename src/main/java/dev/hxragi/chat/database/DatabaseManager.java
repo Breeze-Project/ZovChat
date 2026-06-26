@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -17,14 +17,17 @@ import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 
 public class DatabaseManager {
+  private final Plugin plugin;
+
   private final HikariDataSource dataSource;
 
-  public DatabaseManager(JavaPlugin plugin, ConfigManager configManager) {
-    File databaseFile = new File(plugin.getDataFolder(), configManager.databaseUrl);
+  public DatabaseManager(Plugin plugin, ConfigManager configManager) {
+    this.plugin = plugin;
+    File databaseFile = new File(plugin.getDataFolder(), configManager.databaseUrl());
 
     HikariConfig hikariConfig = new HikariConfig();
     hikariConfig.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
-    hikariConfig.setMaximumPoolSize(configManager.poolSize);
+    hikariConfig.setMaximumPoolSize(configManager.poolSize());
 
     hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
     hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -48,7 +51,7 @@ public class DatabaseManager {
             """)) {
       stmt.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new RuntimeException("Failed to initialize database schema", e);
     }
   }
 
@@ -67,7 +70,7 @@ public class DatabaseManager {
         }
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      plugin.getLogger().severe("Failed to load settings for " + uuid + ": " + e.getMessage());
     }
     return Optional.empty();
   }
@@ -91,7 +94,7 @@ public class DatabaseManager {
   }
 
   public void close() {
-    if (dataSource != null && !dataSource.isClosed()) {
+    if (!dataSource.isClosed()) {
       dataSource.close();
     }
   }

@@ -29,11 +29,16 @@ public class ReplyService {
     return Optional.ofNullable(lastSender.get(recipient));
   }
 
+  public void clearLastSender(UUID playerUuid) {
+    lastSender.remove(playerUuid);
+  }
+
   public void sendPrivateMessage(Player sender, Player target, String message) {
     ChatSettings targetSettings = settingsManager.getSettings(target.getUniqueId());
 
     if (!targetSettings.allowPrivateMessages()) {
-      sender.sendMessage(Component.text("Игрок " + target.getName() + " отключил личные сообщения", NamedTextColor.RED));
+      sender
+          .sendMessage(Component.text("Игрок " + target.getName() + " отключил личные сообщения", NamedTextColor.RED));
       return;
     }
 
@@ -45,11 +50,11 @@ public class ReplyService {
         .build();
 
     Component targetView = Component.text()
-      .append(Component.text("[", NamedTextColor.GRAY))
-      .append(Component.text(sender.getName(), NamedTextColor.GOLD))
-      .append(Component.text(" -> Вам]: ", NamedTextColor.GRAY))
-      .append(Component.text(message, NamedTextColor.WHITE))
-      .build();
+        .append(Component.text("[", NamedTextColor.GRAY))
+        .append(Component.text(sender.getName(), NamedTextColor.GOLD))
+        .append(Component.text(" -> Вам]: ", NamedTextColor.GRAY))
+        .append(Component.text(message, NamedTextColor.WHITE))
+        .build();
 
     sender.sendMessage(senderView);
     target.sendMessage(targetView);

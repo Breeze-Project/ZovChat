@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.hxragi.chat.dto.ChatSettings;
@@ -24,18 +25,21 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class ChatService {
-  private final JavaPlugin plugin;
+  private final Plugin plugin;
   private final MessageFormatter messageFormatter;
   private final ConfigManager configManager;
   private final SettingsManager settingsManager;
   private final MiniMessage miniMessage = MiniMessage.builder().strict(false).build();
 
-  public ChatService(JavaPlugin plugin, MessageFormatter messageFormatter, ConfigManager configManager,
+  private final boolean placeholderApiEnabled;
+
+  public ChatService(Plugin plugin, MessageFormatter messageFormatter, ConfigManager configManager,
       SettingsManager settingsManager) {
     this.plugin = plugin;
     this.messageFormatter = messageFormatter;
     this.configManager = configManager;
     this.settingsManager = settingsManager;
+    this.placeholderApiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
   }
 
   public void handleChat(Player sender, Component originalMessage) {
@@ -62,8 +66,8 @@ public class ChatService {
   }
 
   public Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
-    String lpPrefix = parsePlaceholders(sender, "%luckperms_prefix%");
-    String ccbTag = parsePlaceholders(sender, "%ccb_tag%");
+    String lpPrefix = LegacyConverter.convert(parsePlaceholders(sender, "%luckperms_prefix%"));
+    String ccbTag = LegacyConverter.convert(parsePlaceholders(sender, "%ccb_tag%"));
 
     if (!lpPrefix.isEmpty() && !lpPrefix.endsWith(" ")) {
       lpPrefix = lpPrefix + " ";
@@ -72,8 +76,6 @@ public class ChatService {
       ccbTag = " " + ccbTag;
     }
 
-    lpPrefix = LegacyConverter.convert(lpPrefix);
-    ccbTag = LegacyConverter.convert(ccbTag);
     String senderNameColor = LegacyConverter.convert(
         isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor);
 
@@ -102,10 +104,13 @@ public class ChatService {
   }
 
   private String parsePlaceholders(Player player, String text) {
+    if (!placeholderApiEnabled) {
+      return "";
+    }
     return PlaceholderAPI.setPlaceholders(player, text);
   }
 
-  public void broadcastMessage(Player sender, Component message, boolean isGlobal) {
+  private void broadcastMessage(Player sender, Component message, boolean isGlobal) {
     Bukkit.getConsoleSender().sendMessage(message);
 
     for (Player recipient : Bukkit.getOnlinePlayers()) {
@@ -126,7 +131,7 @@ public class ChatService {
     }
   }
 
-  public boolean isInRange(Player sender, Player recipient) {
+  private boolean isInRange(Player sender, Player recipient) {
     if (sender.equals(recipient)) {
       return true;
     }
@@ -136,7 +141,7 @@ public class ChatService {
     return sender.getLocation().distance(recipient.getLocation()) <= configManager.localRadius;
   }
 
-  public void playMentionSound(List<Player> mentionedPlayers) {
+  private void playMentionSound(List<Player> mentionedPlayers) {
     if (mentionedPlayers.isEmpty()) {
       return;
     }

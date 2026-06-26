@@ -26,7 +26,7 @@ public class ReplyCommand {
               CommandSourceStack source = context.getSource();
               if (!(source.getSender() instanceof Player sender)) {
                 source.getSender()
-                    .sendMessage(Component.text("Только игроки могут использовать эту", NamedTextColor.RED));
+                    .sendMessage(Component.text("Только игроки могут использовать эту команду", NamedTextColor.RED));
                 return 0;
               }
 
@@ -39,7 +39,7 @@ public class ReplyCommand {
               }
 
               Player target = Bukkit.getPlayer(lastSenderId.get());
-              if (target == null || !target.isOnline()) {
+              if (target == null) {
                 sender.sendMessage(Component.text("Игрок больше не в сети", NamedTextColor.RED));
                 return 0;
               }
