@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,8 +36,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.VERSION }}
-          name: Release ${{ steps.version.outputs.VERSION }}
+          tag_name: build-${{ github.sha }}
+          name: Build ${{ github.run_number }}
           files: ${{ steps.jar.outputs.JAR_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
