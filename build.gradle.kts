@@ -11,6 +11,9 @@ repositories {
   maven {
     url = uri("https://repo.extendedclip.com/releases/")
   }
+  maven {
+    url = uri("https://nexus.scarsz.me/content/groups/public/")
+  }
 }
 
 dependencies {
@@ -18,6 +21,7 @@ dependencies {
   compileOnly("com.zaxxer:HikariCP:7.1.0")
   compileOnly("org.xerial:sqlite-jdbc:3.53.2.0")
   compileOnly("me.clip:placeholderapi:2.12.2")
+  compileOnly("com.discordsrv:discordsrv:1.28.0")
 }
 
 java {
