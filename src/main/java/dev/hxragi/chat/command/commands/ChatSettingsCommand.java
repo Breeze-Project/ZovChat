@@ -17,17 +17,18 @@ public class ChatSettingsCommand {
   public ChatSettingsCommand(SettingsManager settingsManager) {
     this.settingsManager = settingsManager;
   }
-  
+
   public LiteralCommandNode<CommandSourceStack> create() {
     return Commands.literal("chatsettings").executes(context -> {
       CommandSourceStack source = context.getSource();
       if (!(source.getSender() instanceof Player sender)) {
-        source.getSender().sendMessage(Component.text("Только игроки могут использовать эту команду", NamedTextColor.RED));
+        source.getSender()
+            .sendMessage(Component.text("Только игроки могут использовать эту команду", NamedTextColor.RED));
         return 0;
       }
       ChatSettingsGUI.open(sender, settingsManager);
       return 1;
     })
-    .build();
+        .build();
   }
 }

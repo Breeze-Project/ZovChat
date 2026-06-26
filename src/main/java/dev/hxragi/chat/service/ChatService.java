@@ -7,7 +7,6 @@ import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
@@ -50,7 +49,7 @@ public class ChatService {
       return;
     }
 
-    boolean isGlobal = rawMessage.startsWith(configManager.globalSymbol);
+    boolean isGlobal = rawMessage.startsWith(configManager.globalSymbol());
     String content = isGlobal ? rawMessage.substring(1).trim() : rawMessage.trim();
 
     if (content.isBlank()) {
@@ -77,7 +76,7 @@ public class ChatService {
     }
 
     String senderNameColor = LegacyConverter.convert(
-        isGlobal ? configManager.globalSenderNameColor : configManager.localSenderNameColor);
+        isGlobal ? configManager.globalSenderNameColor() : configManager.localSenderNameColor());
 
     String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
 
@@ -94,11 +93,11 @@ public class ChatService {
         .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "));
 
     String messageColorStr = LegacyConverter.convert(
-        isGlobal ? configManager.globalMessageColor : configManager.localMessageColor);
+        isGlobal ? configManager.globalMessageColor() : configManager.localMessageColor());
     Component messageColor = miniMessage.deserialize(messageColorStr);
 
     Component separator = miniMessage.deserialize(
-        LegacyConverter.convert(configManager.separatorColor) + ": ");
+        LegacyConverter.convert(configManager.separatorColor()) + ": ");
 
     return senderName.append(separator).append(messageColor.append(message));
   }
@@ -138,7 +137,7 @@ public class ChatService {
     if (!sender.getWorld().equals(recipient.getWorld())) {
       return false;
     }
-    return sender.getLocation().distance(recipient.getLocation()) <= configManager.localRadius;
+    return sender.getLocation().distance(recipient.getLocation()) <= configManager.localRadius();
   }
 
   private void playMentionSound(List<Player> mentionedPlayers) {
