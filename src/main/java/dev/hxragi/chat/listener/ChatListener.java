@@ -1,6 +1,7 @@
 package dev.hxragi.chat.listener;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import dev.hxragi.chat.service.ChatService;
@@ -13,7 +14,7 @@ public class ChatListener implements Listener {
     this.chatService = chatService;
   }
 
-  @EventHandler
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onAsyncChat(AsyncChatEvent asyncChatEvent) {
     asyncChatEvent.setCancelled(true);
     chatService.handleChat(asyncChatEvent.getPlayer(), asyncChatEvent.message());

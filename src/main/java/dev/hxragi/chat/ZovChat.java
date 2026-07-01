@@ -1,6 +1,5 @@
 package dev.hxragi.chat;
 
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.hxragi.chat.command.CommandManager;
