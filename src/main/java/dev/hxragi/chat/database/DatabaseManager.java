@@ -17,13 +17,10 @@ import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 
 public class DatabaseManager {
-  private final Plugin plugin;
-
   private final HikariDataSource dataSource;
 
-  public DatabaseManager(Plugin plugin, ConfigManager configManager) {
-    this.plugin = plugin;
-    File databaseFile = new File(plugin.getDataFolder(), configManager.databaseUrl());
+  public DatabaseManager(File dataFolder, ConfigManager configManager) {
+    File databaseFile = new File(dataFolder, configManager.databaseUrl());
 
     HikariConfig hikariConfig = new HikariConfig();
     hikariConfig.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
@@ -63,14 +60,14 @@ public class DatabaseManager {
         if (rs.next()) {
           return Optional.of(new ChatSettings(
               uuid,
-              rs.getInt("allow_pm") == 1,
-              rs.getInt("play_mention_sound") == 1,
-              rs.getInt("show_local_chat") == 1,
-              rs.getInt("show_global_chat") == 1));
+              rs.getBoolean("allow_pm"),
+              rs.getBoolean("play_mention_sound"),
+              rs.getBoolean("show_local_chat"),
+              rs.getBoolean("show_global_chat")));
         }
       }
     } catch (SQLException e) {
-      plugin.getLogger().severe("Failed to load settings for " + uuid + ": " + e.getMessage());
+      throw new DatabaseException("Failed to load settings for " + uuid, e);
     }
     return Optional.empty();
   }
@@ -89,7 +86,7 @@ public class DatabaseManager {
       stmt.setInt(5, settings.showGlobalChat() ? 1 : 0);
       stmt.executeUpdate();
     } catch (SQLException e) {
-      e.printStackTrace();
+      throw new DatabaseException("Failed to save settings for " + settings.playerId(), e);
     }
   }
 

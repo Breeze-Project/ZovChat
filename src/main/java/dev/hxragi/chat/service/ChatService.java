@@ -14,9 +14,6 @@ import dev.hxragi.chat.dto.FormattedMessage;
 import dev.hxragi.chat.settings.SettingsManager;
 import dev.hxragi.chat.util.LegacyConverter;
 import github.scarsz.discordsrv.DiscordSRV;
-import github.scarsz.discordsrv.api.Subscribe;
-import github.scarsz.discordsrv.api.events.GameChatMessagePreProcessEvent;
-import github.scarsz.discordsrv.util.DiscordUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -26,6 +23,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class ChatService {
+  private static final float MENTION_SOUND_VOLUME = 1.0f;
+  private static final float MENTION_SOUND_PITCH = 1.0f;
+
   private final Plugin plugin;
   private final MessageFormatter messageFormatter;
   private final ConfigManager configManager;
@@ -41,15 +41,6 @@ public class ChatService {
     this.configManager = configManager;
     this.settingsManager = settingsManager;
     this.placeholderApiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
-
-    if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
-      DiscordSRV.api.subscribe(new Object() {
-        @Subscribe
-        public void onGameChatPreProcess(GameChatMessagePreProcessEvent event) {
-          event.setCancelled(true);
-        }
-      });
-    }
   }
 
   public void handleChat(Player sender, Component originalMessage) {
@@ -71,11 +62,23 @@ public class ChatService {
     FormattedMessage formatted = messageFormatter.format(sender, content);
     Component finalMessage = buildFinalMessage(sender, formatted.message(), isGlobal);
 
-    broadcastMessage(sender, finalMessage, isGlobal);
+    String plainContent = PlainTextComponentSerializer.plainText().serialize(formatted.message());
+
+    broadcastMessage(sender, finalMessage, plainContent, isGlobal);
     playMentionSound(formatted.mentionedPlayers());
   }
 
   public Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
+    Component senderName = buildSenderName(sender, isGlobal);
+    Component separator = miniMessage.deserialize(
+        LegacyConverter.convert(configManager.separatorColor()) + ": ");
+    Component messageColor = miniMessage.deserialize(
+        LegacyConverter.convert(isGlobal ? configManager.globalMessageColor() : configManager.globalMessageColor()));
+
+    return senderName.append(separator).append(messageColor.append(message));
+  }
+
+  private Component buildSenderName(Player sender, boolean isGlobal) {
     String lpPrefix = LegacyConverter.convert(parsePlaceholders(sender, "%luckperms_prefix%"));
     String ccbTag = LegacyConverter.convert(parsePlaceholders(sender, "%ccb_tag%"));
 
@@ -86,31 +89,24 @@ public class ChatService {
       ccbTag = " " + ccbTag;
     }
 
-    String senderNameColor = LegacyConverter.convert(
-        isGlobal ? configManager.globalSenderNameColor() : configManager.localSenderNameColor());
+    String senderNameColor = LegacyConverter
+        .convert(isGlobal ? configManager.globalSenderNameColor() : configManager.localSenderNameColor());
 
     String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
 
-    int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
-    long hours = ticks / 20 / 3600;
-
     Component hoverText = Component.text()
         .append(Component.text("Наиграно: ", NamedTextColor.GRAY))
-        .append(Component.text(hours + "ч", NamedTextColor.GRAY))
+        .append(Component.text(getPlayTimeHours(sender) + "ч", NamedTextColor.GRAY))
         .build();
 
-    Component senderName = miniMessage.deserialize(combinedStr)
+    return miniMessage.deserialize(combinedStr)
         .hoverEvent(HoverEvent.showText(hoverText))
         .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "));
+  }
 
-    String messageColorStr = LegacyConverter.convert(
-        isGlobal ? configManager.globalMessageColor() : configManager.localMessageColor());
-    Component messageColor = miniMessage.deserialize(messageColorStr);
-
-    Component separator = miniMessage.deserialize(
-        LegacyConverter.convert(configManager.separatorColor()) + ": ");
-
-    return senderName.append(separator).append(messageColor.append(message));
+  private long getPlayTimeHours(Player sender) {
+    int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
+    return ticks / 20 / 3600;
   }
 
   private String parsePlaceholders(Player player, String text) {
@@ -120,7 +116,7 @@ public class ChatService {
     return PlaceholderAPI.setPlaceholders(player, text);
   }
 
-  private void broadcastMessage(Player sender, Component message, boolean isGlobal) {
+  private void broadcastMessage(Player sender, Component message, String plainContent, boolean isGlobal) {
     Bukkit.getConsoleSender().sendMessage(message);
 
     for (Player recipient : Bukkit.getOnlinePlayers()) {
@@ -132,12 +128,8 @@ public class ChatService {
       }
     }
 
-    if (isGlobal) {
-      if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
-        String plainMessage = PlainTextComponentSerializer.plainText().serialize(message);
-
-        DiscordUtil.sendMessage(DiscordSRV.getPlugin().getMainTextChannel(), plainMessage);
-      }
+    if (isGlobal && Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
+      DiscordSRV.getPlugin().processChatMessage(sender, plainContent, "global", false);
     }
   }
 

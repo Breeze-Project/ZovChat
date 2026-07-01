@@ -16,14 +16,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class ChatSettingsGUI {
-  private static final String TITLE = "Настройки чата";
-
   public static final int INVENTORY_SIZE = 9;
   public static final int SLOT_ALLOW_PM = 0;
   public static final int SLOT_MENTION_SOUND = 1;
   public static final int SLOT_LOCAL_CHAT = 2;
   public static final int SLOT_GLOBAL_CHAT = 3;
   public static final int SLOT_CLOSE = 8;
+
+  private static final String TITLE = "Настройки чата";
 
   public static void open(Player player, SettingsManager settingsManager) {
     Inventory inv = Bukkit.createInventory(new SettingsInventoryHolder(), INVENTORY_SIZE, Component.text(TITLE));

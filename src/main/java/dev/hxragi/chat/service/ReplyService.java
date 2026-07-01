@@ -14,6 +14,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ReplyService {
+  private static final float PM_SOUND_VOLUME = 1.0f;
+  private static final float PM_SOUND_PITCH = 1.5f;
+
   private final Map<UUID, UUID> lastSender = new ConcurrentHashMap<>();
   private final SettingsManager settingsManager;
 
@@ -62,6 +65,6 @@ public class ReplyService {
     lastSender.put(target.getUniqueId(), sender.getUniqueId());
     lastSender.put(sender.getUniqueId(), target.getUniqueId());
 
-    target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
+    target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, PM_SOUND_VOLUME, PM_SOUND_PITCH);
   }
 }

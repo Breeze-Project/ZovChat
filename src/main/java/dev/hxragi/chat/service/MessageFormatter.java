@@ -35,7 +35,7 @@ public class MessageFormatter {
 
   public FormattedMessage format(Player sender, String content) {
     List<Player> mentionedPlayers = new ArrayList<>();
-    StringBuilder processedContent = new StringBuilder();
+    String processedContent = processMentions(sender, content, mentionedPlayers);
 
     TagResolver itemResolver = TagResolver.resolver("item", Tag.inserting(formatItemPlaceholder(sender)));
     TagResolver pingResolver = TagResolver.resolver("ping", Tag.inserting(formatPingPlaceholder(sender)));
@@ -48,6 +48,16 @@ public class MessageFormatter {
       }
       return Tag.inserting(Component.text(targetName));
     });
+
+    String finalString = LegacyConverter.convert(processedContent.toString().trim());
+
+    Component message = miniMessage.deserialize(finalString, itemResolver, pingResolver, locResolver, mentionResolver);
+    return new FormattedMessage(message, List.copyOf(mentionedPlayers));
+  }
+
+  private String processMentions(Player sender, String content, List<Player> mentionedPlayers) {
+    StringBuilder processContent = new StringBuilder();
+    StringBuilder processedContent = new StringBuilder();
 
     for (String word : content.split(" ")) {
       Optional<Player> mentioned = findMention(sender, word);
@@ -65,7 +75,9 @@ public class MessageFormatter {
             before = before.substring(0, before.length() - 1);
           }
 
-          processedContent.append(before).append("<mention:").append(target.getName()).append(">").append(after)
+          processedContent.append(before)
+              .append("<mention:").append(target.getName()).append(">")
+              .append(after)
               .append(" ");
         } else {
           processedContent.append(word).append(" ");
@@ -75,10 +87,7 @@ public class MessageFormatter {
       }
     }
 
-    String finalString = LegacyConverter.convert(processedContent.toString().trim());
-
-    Component message = miniMessage.deserialize(finalString, itemResolver, pingResolver, locResolver, mentionResolver);
-    return new FormattedMessage(message, List.copyOf(mentionedPlayers));
+    return processedContent.toString();
   }
 
   private Component formatItemPlaceholder(Player sender) {

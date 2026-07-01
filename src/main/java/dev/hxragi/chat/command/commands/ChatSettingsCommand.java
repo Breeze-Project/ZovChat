@@ -28,7 +28,6 @@ public class ChatSettingsCommand {
       }
       ChatSettingsGUI.open(sender, settingsManager);
       return 1;
-    })
-        .build();
+    }).build();
   }
 }

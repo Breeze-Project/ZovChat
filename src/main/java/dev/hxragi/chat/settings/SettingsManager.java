@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import dev.hxragi.chat.dto.ChatSettings;
+import dev.hxragi.chat.database.DatabaseException;
 import dev.hxragi.chat.database.DatabaseManager;
 
 public class SettingsManager {
@@ -35,7 +36,11 @@ public class SettingsManager {
 
   public void flushAll() {
     for (ChatSettings settings : cache.values()) {
-      databaseManager.saveSettings(settings);
+      try {
+        databaseManager.saveSettings(settings);
+      } catch (DatabaseException e) {
+        plugin.getLogger().severe("Failed to flush settings for " + settings.playerId() + ": " + e);
+      }
     }
   }
 }
