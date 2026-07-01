@@ -22,7 +22,7 @@ public class ZovChat extends JavaPlugin {
     saveDefaultConfig();
 
     ConfigManager configManager = new ConfigManager(this);
-    this.databaseManager = new DatabaseManager(this, configManager);
+    this.databaseManager = new DatabaseManager(getDataFolder(), configManager);
     this.settingsManager = new SettingsManager(this, databaseManager);
 
     MessageFormatter messageFormatter = new MessageFormatter(configManager);

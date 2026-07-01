@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.plugin.Plugin;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
