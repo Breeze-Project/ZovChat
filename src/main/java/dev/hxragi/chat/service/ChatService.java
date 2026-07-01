@@ -14,6 +14,8 @@ import dev.hxragi.chat.dto.FormattedMessage;
 import dev.hxragi.chat.settings.SettingsManager;
 import dev.hxragi.chat.util.LegacyConverter;
 import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.api.Subscribe;
+import github.scarsz.discordsrv.api.events.GameChatMessagePreProcessEvent;
 import github.scarsz.discordsrv.util.DiscordUtil;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -39,6 +41,15 @@ public class ChatService {
     this.configManager = configManager;
     this.settingsManager = settingsManager;
     this.placeholderApiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+
+    if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) {
+      DiscordSRV.api.subscribe(new Object() {
+        @Subscribe
+        public void onGameChatPreProcess(GameChatMessagePreProcessEvent event) {
+          event.setCancelled(true);
+        }
+      });
+    }
   }
 
   public void handleChat(Player sender, Component originalMessage) {
