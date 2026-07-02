@@ -73,7 +73,7 @@ public class ChatService {
     Component separator = miniMessage.deserialize(
         LegacyConverter.convert(configManager.separatorColor()) + ": ");
     Component messageColor = miniMessage.deserialize(
-        LegacyConverter.convert(isGlobal ? configManager.globalMessageColor() : configManager.globalMessageColor()));
+        LegacyConverter.convert(isGlobal ? configManager.globalMessageColor() : configManager.localMessageColor()));
 
     return senderName.append(separator).append(messageColor.append(message));
   }
