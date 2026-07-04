@@ -8,6 +8,7 @@ import dev.hxragi.chat.database.DatabaseManager;
 import dev.hxragi.chat.hook.AdvancedBanHook;
 import dev.hxragi.chat.listener.ChatListener;
 import dev.hxragi.chat.listener.ChatSettingsGUIListener;
+import dev.hxragi.chat.listener.PlayerJoinListener;
 import dev.hxragi.chat.listener.PlayerQuitListener;
 import dev.hxragi.chat.service.ChatService;
 import dev.hxragi.chat.service.MessageFormatter;
@@ -35,6 +36,7 @@ public class ZovChat extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new ChatListener(chatService), this);
     getServer().getPluginManager().registerEvents(new ChatSettingsGUIListener(settingsManager), this);
     getServer().getPluginManager().registerEvents(new PlayerQuitListener(settingsManager, replyService), this);
+    getServer().getPluginManager().registerEvents(new PlayerJoinListener(settingsManager), this);
 
     CommandManager commandManager = new CommandManager(this, replyService, settingsManager);
     commandManager.registerAll();

@@ -1,6 +1,7 @@
 package dev.hxragi.chat.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -100,12 +101,12 @@ public class ChatService {
     }
   }
 
-  public Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
+  private Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
     String format = isGlobal ? configManager.globalFormat() : configManager.localFormat();
     return buildFinalMessage(sender, message, format);
   }
 
-  public Component buildFinalMessage(Player sender, Component message, String format){
+  public Component buildFinalMessage(Player sender, Component message, String format) {
     if (placeholderApiEnabled) {
       format = PlaceholderAPI.setPlaceholders(sender, format);
     }
@@ -133,7 +134,7 @@ public class ChatService {
 
   private long getPlayTimeHours(Player sender) {
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
-    return ticks / 20 / 3600;
+    return ticks / (20 * 3600);
   }
 
   private void broadcastMessage(Player sender, Component message, String plainContent, boolean isGlobal) {
@@ -163,16 +164,19 @@ public class ChatService {
     return sender.getLocation().distance(recipient.getLocation()) <= configManager.localRadius();
   }
 
-  private void playMentionSound(List<Player> mentionedPlayers) {
+  private void playMentionSound(List<UUID> mentionedPlayers) {
     if (mentionedPlayers.isEmpty()) {
       return;
     }
     Bukkit.getScheduler().runTask(plugin, () -> {
-      for (Player target : mentionedPlayers) {
-        ChatSettings settings = settingsManager.getSettings(target.getUniqueId());
-        if (settings.playerMentionSound()) {
-          target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, MENTION_SOUND_VOLUME,
-              MENTION_SOUND_PITCH);
+      for (UUID targetId : mentionedPlayers) {
+        Player target = Bukkit.getPlayer(targetId);
+        if (target != null) {
+          ChatSettings settings = settingsManager.getSettings(target.getUniqueId());
+          if (settings.playerMentionSound()) {
+            target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, MENTION_SOUND_VOLUME,
+                MENTION_SOUND_PITCH);
+          }
         }
       }
     });

@@ -23,9 +23,7 @@ public class PmCommand {
     return Commands.literal("pm")
         .then(Commands.argument("target", StringArgumentType.word())
             .suggests((context, builder) -> {
-              for (Player player : Bukkit.getOnlinePlayers()) {
-                builder.suggest(player.getName());
-              }
+              Bukkit.getOnlinePlayers().stream().map(Player::getName).forEach(builder::suggest);
               return builder.buildFuture();
             })
             .then(Commands.argument("message", StringArgumentType.greedyString())

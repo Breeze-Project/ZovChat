@@ -3,8 +3,10 @@ package dev.hxragi.chat.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,7 +36,7 @@ public class MessageFormatter {
   }
 
   public FormattedMessage format(Player sender, String content) {
-    List<Player> mentionedPlayers = new ArrayList<>();
+    List<UUID> mentionedPlayers = new ArrayList<>();
     String processedContent = processMentions(sender, content, mentionedPlayers);
 
     TagResolver itemResolver = TagResolver.resolver("item", Tag.inserting(formatItemPlaceholder(sender)));
@@ -55,15 +57,14 @@ public class MessageFormatter {
     return new FormattedMessage(message, List.copyOf(mentionedPlayers));
   }
 
-  private String processMentions(Player sender, String content, List<Player> mentionedPlayers) {
-    StringBuilder processContent = new StringBuilder();
+  private String processMentions(Player sender, String content, List<UUID> mentionedPlayers) {
     StringBuilder processedContent = new StringBuilder();
 
     for (String word : content.split(" ")) {
       Optional<Player> mentioned = findMention(sender, word);
       if (mentioned.isPresent()) {
         Player target = mentioned.get();
-        mentionedPlayers.add(target);
+        mentionedPlayers.add(target.getUniqueId());
 
         String cleanWord = word.replaceAll("[^a-zA-Z0-9_]", "");
         if (!cleanWord.isEmpty()) {
@@ -106,8 +107,9 @@ public class MessageFormatter {
   }
 
   private Component formatLocPlaceholder(Player sender) {
-    return Component.text(String.format("%d, %d, %d", sender.getLocation().getBlockX(),
-        sender.getLocation().getBlockY(), sender.getLocation().getBlockZ()), NamedTextColor.WHITE);
+    Location loc = sender.getLocation();
+    return Component.text(String.format("%d, %d, %d", loc.getBlockX(),
+        loc.getBlockY(), loc.getBlockZ()), NamedTextColor.WHITE);
   }
 
   private Optional<Player> findMention(Player sender, String word) {

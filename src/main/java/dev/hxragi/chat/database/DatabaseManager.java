@@ -18,7 +18,7 @@ public class DatabaseManager {
   private final HikariDataSource dataSource;
 
   public DatabaseManager(File dataFolder, ConfigManager configManager) {
-    File databaseFile = new File(dataFolder, configManager.databaseUrl());
+    File databaseFile = new File(dataFolder, configManager.databaseName());
 
     HikariConfig hikariConfig = new HikariConfig();
     hikariConfig.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());

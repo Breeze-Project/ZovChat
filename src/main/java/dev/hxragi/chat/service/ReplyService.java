@@ -43,6 +43,7 @@ public class ReplyService {
 
   public void sendPrivateMessage(Player sender, Player target, String message) {
     if (advancedBanHook.isMuted(sender)) {
+      sender.sendMessage(Component.text("Вы не можете отправлять сообщения будучи замученным", NamedTextColor.RED));
       return;
     }
 

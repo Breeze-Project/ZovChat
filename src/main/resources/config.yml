@@ -15,5 +15,5 @@ mention:
   color: "<gold>"
 
 database: 
-  url: "database.db"
+  name: "database.db"
   poolSize: 10

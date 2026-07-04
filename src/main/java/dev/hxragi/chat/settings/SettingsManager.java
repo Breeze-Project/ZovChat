@@ -21,6 +21,10 @@ public class SettingsManager {
     this.databaseManager = databaseManager;
   }
 
+  public void preloadSettings(UUID uuid) {
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> getSettings(uuid));
+  }
+
   public ChatSettings getSettings(UUID uuid) {
     return cache.computeIfAbsent(uuid, id -> databaseManager.loadSettings(id).orElse(ChatSettings.defaults(id)));
   }
