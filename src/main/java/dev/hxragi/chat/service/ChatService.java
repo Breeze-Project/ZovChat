@@ -20,6 +20,8 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class ChatService {
@@ -69,37 +71,29 @@ public class ChatService {
   }
 
   public Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
-    Component senderName = buildSenderName(sender, isGlobal);
-    Component separator = miniMessage.deserialize(
-        LegacyConverter.convert(configManager.separatorColor()) + ": ");
-    Component messageColor = miniMessage.deserialize(
-        LegacyConverter.convert(isGlobal ? configManager.globalMessageColor() : configManager.localMessageColor()));
+    String format = isGlobal ? configManager.globalFormat() : configManager.localFormat();
 
-    return senderName.append(separator).append(messageColor.append(message));
+    if (placeholderApiEnabled) {
+      format = PlaceholderAPI.setPlaceholders(sender, format);
+    }
+
+    format = format.replaceAll("%[^%\\s]+%", "");
+
+    format = LegacyConverter.convert(format);
+
+    TagResolver playerResolver = TagResolver.resolver("player", Tag.inserting(buildSenderName(sender)));
+    TagResolver messageResolver = TagResolver.resolver("message", Tag.inserting(message));
+
+    return miniMessage.deserialize(format, playerResolver, messageResolver);
   }
 
-  private Component buildSenderName(Player sender, boolean isGlobal) {
-    String lpPrefix = LegacyConverter.convert(parsePlaceholders(sender, "%luckperms_prefix%"));
-    String ccbTag = LegacyConverter.convert(parsePlaceholders(sender, "%ccb_tag%"));
-
-    if (!lpPrefix.isEmpty() && !lpPrefix.endsWith(" ")) {
-      lpPrefix = lpPrefix + " ";
-    }
-    if (!ccbTag.isEmpty() && !ccbTag.startsWith(" ")) {
-      ccbTag = " " + ccbTag;
-    }
-
-    String senderNameColor = LegacyConverter
-        .convert(isGlobal ? configManager.globalSenderNameColor() : configManager.localSenderNameColor());
-
-    String combinedStr = lpPrefix + senderNameColor + " " + sender.getName() + " " + "<reset>" + ccbTag;
-
+  private Component buildSenderName(Player sender) {
     Component hoverText = Component.text()
         .append(Component.text("Наиграно: ", NamedTextColor.GRAY))
         .append(Component.text(getPlayTimeHours(sender) + "ч", NamedTextColor.GRAY))
         .build();
 
-    return miniMessage.deserialize(combinedStr)
+    return Component.text(sender.getName())
         .hoverEvent(HoverEvent.showText(hoverText))
         .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "));
   }
@@ -107,13 +101,6 @@ public class ChatService {
   private long getPlayTimeHours(Player sender) {
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
     return ticks / 20 / 3600;
-  }
-
-  private String parsePlaceholders(Player player, String text) {
-    if (!placeholderApiEnabled) {
-      return "";
-    }
-    return PlaceholderAPI.setPlaceholders(player, text);
   }
 
   private void broadcastMessage(Player sender, Component message, String plainContent, boolean isGlobal) {
@@ -151,7 +138,7 @@ public class ChatService {
       for (Player target : mentionedPlayers) {
         ChatSettings settings = settingsManager.getSettings(target.getUniqueId());
         if (settings.playerMentionSound()) {
-          target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.0f);
+          target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, MENTION_SOUND_VOLUME, MENTION_SOUND_PITCH);
         }
       }
     });

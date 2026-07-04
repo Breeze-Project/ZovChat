@@ -2,13 +2,9 @@ chat:
   globalSymbol: "!"
   localChatRadius: 128
 
-  globalSenderNameColor: "<gray>"
-  localSenderNameColor: "<gray>"
-
-  globalMessageColor: "<white>"
-  localMessageColor: "<white>"
-
-  separatorColor: "<gray>"
+  formats:
+    global: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <white><message>"
+    local: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <gray><message>"
 
 mention:
   color: "<gold>"
