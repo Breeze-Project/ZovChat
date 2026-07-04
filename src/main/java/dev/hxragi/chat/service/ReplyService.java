@@ -12,6 +12,8 @@ import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.hook.AdvancedBanHook;
 import dev.hxragi.chat.settings.SettingsManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ReplyService {
@@ -52,16 +54,24 @@ public class ReplyService {
       return;
     }
 
+    Component targetNameComponent = Component.text(target.getName(), NamedTextColor.GOLD)
+      .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "))
+      .hoverEvent(HoverEvent.showText("Нажмите, чтобы написать сообщение", NamedTextColor.GRAY));
+
+    Component senderNameComponent = Component.text(sender.getName(), NamedTextColor.GOLD)
+      .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "))
+      .hoverEvent(HoverEvent.showText(Component.text("Нажмите, чтобы ответить", NamedTextColor.GRAY)));
+
     Component senderView = Component.text()
         .append(Component.text("[Вы -> ", NamedTextColor.GRAY))
-        .append(Component.text(target.getName(), NamedTextColor.GOLD))
+        .append(targetNameComponent)
         .append(Component.text("]: ", NamedTextColor.GRAY))
         .append(Component.text(message, NamedTextColor.WHITE))
         .build();
 
     Component targetView = Component.text()
         .append(Component.text("[", NamedTextColor.GRAY))
-        .append(Component.text(sender.getName(), NamedTextColor.GOLD))
+        .append(senderNameComponent)
         .append(Component.text(" -> Вам]: ", NamedTextColor.GRAY))
         .append(Component.text(message, NamedTextColor.WHITE))
         .build();
