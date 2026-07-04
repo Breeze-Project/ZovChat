@@ -13,3 +13,6 @@ dependencies:
     DiscordSRV:
       load: BEFORE
       required: false
+    AdvancedBan:
+      load: BEFORE
+      required: false

@@ -14,6 +14,9 @@ repositories {
   maven {
     url = uri("https://nexus.scarsz.me/content/groups/public/")
   }
+  maven {
+    url = uri("https://jitpack.io")
+  }
 }
 
 dependencies {
@@ -22,6 +25,7 @@ dependencies {
   compileOnly("org.xerial:sqlite-jdbc:3.53.2.0")
   compileOnly("me.clip:placeholderapi:2.12.2")
   compileOnly("com.discordsrv:discordsrv:1.28.0")
+  compileOnly("com.github.DevLeoko.AdvancedBan:AdvancedBan-Bukkit:v2.3.0")
 }
 
 java {

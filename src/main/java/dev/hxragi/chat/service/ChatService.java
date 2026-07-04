@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 import dev.hxragi.chat.dto.ChatSettings;
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.dto.FormattedMessage;
+import dev.hxragi.chat.hook.AdvancedBanHook;
 import dev.hxragi.chat.settings.SettingsManager;
 import dev.hxragi.chat.util.LegacyConverter;
 import github.scarsz.discordsrv.DiscordSRV;
@@ -32,20 +33,25 @@ public class ChatService {
   private final MessageFormatter messageFormatter;
   private final ConfigManager configManager;
   private final SettingsManager settingsManager;
+  private final AdvancedBanHook advancedBanHook;
   private final MiniMessage miniMessage = MiniMessage.builder().strict(false).build();
 
   private final boolean placeholderApiEnabled;
 
   public ChatService(Plugin plugin, MessageFormatter messageFormatter, ConfigManager configManager,
-      SettingsManager settingsManager) {
+      SettingsManager settingsManager, AdvancedBanHook advancedBanHook) {
     this.plugin = plugin;
     this.messageFormatter = messageFormatter;
     this.configManager = configManager;
     this.settingsManager = settingsManager;
+    this.advancedBanHook = advancedBanHook;
     this.placeholderApiEnabled = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
   }
 
   public void handleChat(Player sender, Component originalMessage) {
+    if (advancedBanHook.isMuted(sender)) {
+      return;
+    }
     String rawMessage = PlainTextComponentSerializer.plainText().serialize(originalMessage);
 
     if (rawMessage.isBlank()) {

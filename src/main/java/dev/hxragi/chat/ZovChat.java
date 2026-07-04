@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import dev.hxragi.chat.command.CommandManager;
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.database.DatabaseManager;
+import dev.hxragi.chat.hook.AdvancedBanHook;
 import dev.hxragi.chat.listener.ChatListener;
 import dev.hxragi.chat.listener.ChatSettingsGUIListener;
 import dev.hxragi.chat.listener.PlayerQuitListener;
@@ -25,15 +26,18 @@ public class ZovChat extends JavaPlugin {
     this.databaseManager = new DatabaseManager(getDataFolder(), configManager);
     this.settingsManager = new SettingsManager(this, databaseManager);
 
+    AdvancedBanHook advancedBanHook = new AdvancedBanHook();
+
     MessageFormatter messageFormatter = new MessageFormatter(configManager);
-    ChatService chatService = new ChatService(this, messageFormatter, configManager, settingsManager);
-    ReplyService replyService = new ReplyService(settingsManager);
+    ChatService chatService = new ChatService(this, messageFormatter, configManager, settingsManager, advancedBanHook);
+    ReplyService replyService = new ReplyService(settingsManager, advancedBanHook);
 
     getServer().getPluginManager().registerEvents(new ChatListener(chatService), this);
     getServer().getPluginManager().registerEvents(new ChatSettingsGUIListener(settingsManager), this);
     getServer().getPluginManager().registerEvents(new PlayerQuitListener(settingsManager, replyService), this);
 
-    new CommandManager(this, replyService, settingsManager);
+    CommandManager commandManager = new CommandManager(this, replyService, settingsManager);
+    commandManager.registerAll();
   }
 
   @Override

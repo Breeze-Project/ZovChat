@@ -9,6 +9,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import dev.hxragi.chat.dto.ChatSettings;
+import dev.hxragi.chat.hook.AdvancedBanHook;
 import dev.hxragi.chat.settings.SettingsManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -19,9 +20,11 @@ public class ReplyService {
 
   private final Map<UUID, UUID> lastSender = new ConcurrentHashMap<>();
   private final SettingsManager settingsManager;
+  private final AdvancedBanHook advancedBanHook;
 
-  public ReplyService(SettingsManager settingsManager) {
+  public ReplyService(SettingsManager settingsManager, AdvancedBanHook advancedBanHook) {
     this.settingsManager = settingsManager;
+    this.advancedBanHook = advancedBanHook;
   }
 
   public void setLastSender(UUID recipient, UUID sender) {
@@ -37,6 +40,10 @@ public class ReplyService {
   }
 
   public void sendPrivateMessage(Player sender, Player target, String message) {
+    if (advancedBanHook.isMuted(sender)) {
+      return;
+    }
+
     ChatSettings targetSettings = settingsManager.getSettings(target.getUniqueId());
 
     if (!targetSettings.allowPrivateMessages()) {
