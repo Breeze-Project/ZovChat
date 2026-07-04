@@ -8,6 +8,9 @@ public record ConfigManager(
     String globalFormat,
     String localFormat,
     String mentionColor,
+    String adminSymbol,
+    String adminFormat,
+    String adminPermission,
     String databaseUrl,
     int poolSize) {
   public ConfigManager(JavaPlugin plugin) {
@@ -17,6 +20,9 @@ public record ConfigManager(
         plugin.getConfig().getString("chat.formats.global"),
         plugin.getConfig().getString("chat.formats.local"),
         plugin.getConfig().getString("mention.color"),
+        plugin.getConfig().getString("chat.adminChat.symbol"),
+        plugin.getConfig().getString("chat.adminChat.format"),
+        plugin.getConfig().getString("chat.adminChat.permission"),
         plugin.getConfig().getString("database.url"),
         plugin.getConfig().getInt("database.poolSize"));
   }

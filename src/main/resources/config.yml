@@ -6,6 +6,11 @@ chat:
     global: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <white><message>"
     local: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <gray><message>"
 
+  adminChat:
+    symbol: "#"
+    permission: "zovchat.adminChat"
+    format: "%luckperms_prefix%<dark_red><player><reset>%ccb_tag%<gray>: <red><message>"
+
 mention:
   color: "<gold>"
 

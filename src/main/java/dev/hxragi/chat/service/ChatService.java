@@ -59,6 +59,16 @@ public class ChatService {
       return;
     }
 
+    if (rawMessage.startsWith(configManager.adminSymbol()) && sender.hasPermission(configManager.adminPermission())) {
+      String content = rawMessage.substring(configManager.adminSymbol().length()).trim();
+      if (content.isBlank()) {
+        sender.sendMessage(Component.text("Сообщение не может быть пустым", NamedTextColor.RED));
+        return;
+      }
+      handleAdminChat(sender, content);
+      return;
+    }
+
     boolean isGlobal = rawMessage.startsWith(configManager.globalSymbol());
     String content = isGlobal ? rawMessage.substring(1).trim() : rawMessage.trim();
 
@@ -76,9 +86,26 @@ public class ChatService {
     playMentionSound(formatted.mentionedPlayers());
   }
 
+  private void handleAdminChat(Player sender, String content) {
+    FormattedMessage formatted = messageFormatter.format(sender, content);
+    Component finalMessage = buildFinalMessage(sender, formatted.message(), configManager.adminFormat());
+
+    Bukkit.getConsoleSender().sendMessage(finalMessage);
+
+    String permission = configManager.adminPermission();
+    for (Player recipient : Bukkit.getOnlinePlayers()) {
+      if (recipient.hasPermission(permission)) {
+        recipient.sendMessage(finalMessage);
+      }
+    }
+  }
+
   public Component buildFinalMessage(Player sender, Component message, boolean isGlobal) {
     String format = isGlobal ? configManager.globalFormat() : configManager.localFormat();
+    return buildFinalMessage(sender, message, format);
+  }
 
+  public Component buildFinalMessage(Player sender, Component message, String format){
     if (placeholderApiEnabled) {
       format = PlaceholderAPI.setPlaceholders(sender, format);
     }
@@ -144,7 +171,8 @@ public class ChatService {
       for (Player target : mentionedPlayers) {
         ChatSettings settings = settingsManager.getSettings(target.getUniqueId());
         if (settings.playerMentionSound()) {
-          target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, MENTION_SOUND_VOLUME, MENTION_SOUND_PITCH);
+          target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, MENTION_SOUND_VOLUME,
+              MENTION_SOUND_PITCH);
         }
       }
     });

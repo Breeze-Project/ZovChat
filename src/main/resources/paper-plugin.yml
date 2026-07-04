@@ -16,3 +16,7 @@ dependencies:
     AdvancedBan:
       load: BEFORE
       required: false
+
+permissions:
+  zovchat.adminchat:
+    default: op
