@@ -56,7 +56,7 @@ public class ReplyService {
 
     Component targetNameComponent = Component.text(target.getName(), NamedTextColor.GOLD)
       .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "))
-      .hoverEvent(HoverEvent.showText("Нажмите, чтобы написать сообщение", NamedTextColor.GRAY));
+      .hoverEvent(HoverEvent.showText(Component.text("Нажмите, чтобы написать сообщение", NamedTextColor.GRAY)));
 
     Component senderNameComponent = Component.text(sender.getName(), NamedTextColor.GOLD)
       .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "))
