@@ -39,8 +39,8 @@ public class ZovChat extends JavaPlugin {
 
     getServer().getPluginManager().registerEvents(new ChatListener(chatService), this);
     getServer().getPluginManager().registerEvents(new ChatSettingsGUIListener(settingsManager), this);
-    getServer().getPluginManager().registerEvents(new PlayerQuitListener(settingsManager, replyService), this);
-    getServer().getPluginManager().registerEvents(new PlayerJoinListener(settingsManager), this);
+    getServer().getPluginManager().registerEvents(new PlayerQuitListener(settingsManager, replyService, configManager), this);
+    getServer().getPluginManager().registerEvents(new PlayerJoinListener(settingsManager, configManager), this);
 
     this.discordSRVHook = new DiscordSRVHook(this, settingsManager, configManager);
 

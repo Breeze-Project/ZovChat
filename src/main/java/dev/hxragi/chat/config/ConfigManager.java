@@ -12,6 +12,8 @@ public record ConfigManager(
     String adminFormat,
     String adminPermission,
     String clanChatFormat,
+    String joinFormat,
+    String quitFormat,
     String databaseName,
     int poolSize) {
   public ConfigManager(JavaPlugin plugin) {
@@ -25,6 +27,8 @@ public record ConfigManager(
         plugin.getConfig().getString("chat.adminChat.format"),
         plugin.getConfig().getString("chat.adminChat.permission"),
         plugin.getConfig().getString("chat.formats.clan"),
+        plugin.getConfig().getString("messages.join"),
+        plugin.getConfig().getString("messages.quit"),
         plugin.getConfig().getString("database.name"),
         plugin.getConfig().getInt("database.poolSize"));
   }
