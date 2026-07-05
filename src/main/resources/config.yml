@@ -3,14 +3,14 @@ chat:
   localChatRadius: 128
 
   formats:
-    global: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <white><message>"
-    local: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <gray><message>"
-    clan: "%ccb_tag%<dark_green><player><gray>: <green><message>"
+    global: "<gray>[▸] <player>: <white><message>"
+    local: "<gray>[▸] <player>: <gray><message>"
+    clan: "%ccb_tag% <gray>[▸] <player>: <green><message>"
 
   adminChat:
     symbol: "#"
     permission: "zovchat.adminChat"
-    format: "%luckperms_prefix%<dark_red><player><reset>%ccb_tag%<gray>: <red><message>"
+    format: "<dark_red>[▸] <player>: <red><message>"
 
 mention:
   color: "<gold>"
