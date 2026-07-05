@@ -5,7 +5,7 @@ chat:
   formats:
     global: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <white><message>"
     local: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <gray><message>"
-    clan: "%luckperms_prefix%<dark_green><player><gray>: <green><message>"
+    clan: "%ccb_tag%<dark_green><player><gray>: <green><message>"
 
   adminChat:
     symbol: "#"
