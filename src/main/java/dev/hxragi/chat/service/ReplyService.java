@@ -56,12 +56,12 @@ public class ReplyService {
     }
 
     Component targetNameComponent = Component.text(target.getName(), NamedTextColor.GOLD)
-      .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "))
-      .hoverEvent(HoverEvent.showText(Component.text("Нажмите, чтобы написать сообщение", NamedTextColor.GRAY)));
+        .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "))
+        .hoverEvent(HoverEvent.showText(Component.text("Нажмите, чтобы написать сообщение", NamedTextColor.GRAY)));
 
     Component senderNameComponent = Component.text(sender.getName(), NamedTextColor.GOLD)
-      .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "))
-      .hoverEvent(HoverEvent.showText(Component.text("Нажмите, чтобы ответить", NamedTextColor.GRAY)));
+        .clickEvent(ClickEvent.suggestCommand("/msg " + sender.getName() + " "))
+        .hoverEvent(HoverEvent.showText(Component.text("Нажмите, чтобы ответить", NamedTextColor.GRAY)));
 
     Component senderView = Component.text()
         .append(Component.text("[Вы -> ", NamedTextColor.GRAY))

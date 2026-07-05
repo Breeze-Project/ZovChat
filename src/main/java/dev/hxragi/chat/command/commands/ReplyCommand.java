@@ -21,14 +21,10 @@ public class ReplyCommand {
 
   public LiteralCommandNode<CommandSourceStack> create() {
     return Commands.literal("r")
+        .requires(source -> source.getSender() instanceof Player)
         .then(Commands.argument("message", StringArgumentType.greedyString())
             .executes(context -> {
-              CommandSourceStack source = context.getSource();
-              if (!(source.getSender() instanceof Player sender)) {
-                source.getSender()
-                    .sendMessage(Component.text("Только игроки могут использовать эту команду", NamedTextColor.RED));
-                return 0;
-              }
+              Player sender = (Player) context.getSource().getSender();
 
               String message = StringArgumentType.getString(context, "message");
 

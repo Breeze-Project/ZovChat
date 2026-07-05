@@ -21,6 +21,7 @@ public class PmCommand {
 
   public LiteralCommandNode<CommandSourceStack> create() {
     return Commands.literal("pm")
+        .requires(source -> source.getSender() instanceof Player)
         .then(Commands.argument("target", StringArgumentType.word())
             .suggests((context, builder) -> {
               Bukkit.getOnlinePlayers().stream().map(Player::getName).forEach(builder::suggest);
@@ -28,12 +29,7 @@ public class PmCommand {
             })
             .then(Commands.argument("message", StringArgumentType.greedyString())
                 .executes(context -> {
-                  CommandSourceStack source = context.getSource();
-                  if (!(source.getSender() instanceof Player sender)) {
-                    source.getSender().sendMessage(
-                        Component.text("Только игроки могут использовать эту команду", NamedTextColor.RED));
-                    return 0;
-                  }
+                  Player sender = (Player) context.getSource().getSender();
 
                   String targetName = StringArgumentType.getString(context, "target");
                   String message = StringArgumentType.getString(context, "message");

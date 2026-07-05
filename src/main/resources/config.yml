@@ -16,4 +16,4 @@ mention:
 
 database: 
   name: "database.db"
-  poolSize: 10
+  poolSize: 1

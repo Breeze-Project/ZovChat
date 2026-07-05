@@ -6,6 +6,7 @@ import dev.hxragi.chat.command.CommandManager;
 import dev.hxragi.chat.config.ConfigManager;
 import dev.hxragi.chat.database.DatabaseManager;
 import dev.hxragi.chat.hook.AdvancedBanHook;
+import dev.hxragi.chat.hook.DiscordSRVHook;
 import dev.hxragi.chat.listener.ChatListener;
 import dev.hxragi.chat.listener.ChatSettingsGUIListener;
 import dev.hxragi.chat.listener.PlayerJoinListener;
@@ -18,6 +19,7 @@ import dev.hxragi.chat.settings.SettingsManager;
 public class ZovChat extends JavaPlugin {
   private DatabaseManager databaseManager;
   private SettingsManager settingsManager;
+  private DiscordSRVHook discordSRVHook;
 
   @Override
   public void onEnable() {
@@ -38,6 +40,8 @@ public class ZovChat extends JavaPlugin {
     getServer().getPluginManager().registerEvents(new PlayerQuitListener(settingsManager, replyService), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinListener(settingsManager), this);
 
+    this.discordSRVHook = new DiscordSRVHook(this, settingsManager, configManager);
+
     CommandManager commandManager = new CommandManager(this, replyService, settingsManager);
     commandManager.registerAll();
   }
@@ -47,6 +51,9 @@ public class ZovChat extends JavaPlugin {
     settingsManager.flushAll();
     if (databaseManager != null) {
       databaseManager.close();
+    }
+    if (discordSRVHook != null) {
+      discordSRVHook.unsubscribe();
     }
   }
 }

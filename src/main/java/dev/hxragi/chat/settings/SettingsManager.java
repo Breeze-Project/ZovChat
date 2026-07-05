@@ -3,6 +3,7 @@ package dev.hxragi.chat.settings;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -43,7 +44,7 @@ public class SettingsManager {
       try {
         databaseManager.saveSettings(settings);
       } catch (DatabaseException e) {
-        plugin.getLogger().severe("Failed to flush settings for " + settings.playerId() + ": " + e);
+        plugin.getLogger().log(Level.SEVERE, "Failed to flush settings for " + settings.playerId() + ": " + e);
       }
     }
   }

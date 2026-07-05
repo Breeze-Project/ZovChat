@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,11 +29,16 @@ public class MessageFormatter {
   private static final int PING_LOW_THRESHOLD = 100;
   private static final int PING_MEDIUM_THRESHOLD = 200;
 
+  private static final Pattern NON_ALPHANUMERIC_PATTERN = Pattern.compile("[^a-zA-Z0-9_]");
+
   private final MiniMessage miniMessage = MiniMessage.builder().strict(false).build();
   private final ConfigManager configManager;
 
+  private final String mentionColor;
+
   public MessageFormatter(ConfigManager configManager) {
     this.configManager = configManager;
+    this.mentionColor = LegacyConverter.convert(configManager.mentionColor());
   }
 
   public FormattedMessage format(Player sender, String content) {
@@ -66,15 +72,11 @@ public class MessageFormatter {
         Player target = mentioned.get();
         mentionedPlayers.add(target.getUniqueId());
 
-        String cleanWord = word.replaceAll("[^a-zA-Z0-9_]", "");
+        String cleanWord = NON_ALPHANUMERIC_PATTERN.matcher(word).replaceAll("");
         if (!cleanWord.isEmpty()) {
           int index = word.indexOf(cleanWord);
           String before = word.substring(0, index);
           String after = word.substring(index + cleanWord.length());
-
-          if (before.endsWith("@")) {
-            before = before.substring(0, before.length() - 1);
-          }
 
           processedContent.append(before)
               .append("<mention:").append(target.getName()).append(">")
@@ -113,16 +115,16 @@ public class MessageFormatter {
   }
 
   private Optional<Player> findMention(Player sender, String word) {
-    String cleanWord = word.replaceAll("[^a-zA-Z0-9_]", "");
+    String cleanWord = NON_ALPHANUMERIC_PATTERN.matcher(word).replaceAll("");
     if (cleanWord.isEmpty()) {
       return Optional.empty();
     }
-    return Optional.ofNullable(Bukkit.getPlayerExact(cleanWord)).filter(player -> !player.equals(sender));
+    return Optional.ofNullable(Bukkit.getPlayerExact(cleanWord))
+        .filter(player -> sender == null || !player.equals(sender));
   }
 
   private Component createMentionComponent(Player target) {
-    String mentionColor = LegacyConverter.convert(configManager.mentionColor());
-    return miniMessage.deserialize(mentionColor + "@" + target.getName())
+    return miniMessage.deserialize(mentionColor + target.getName())
         .hoverEvent(HoverEvent.showText(Component.text("Онлайн: " + target.getName())))
         .clickEvent(ClickEvent.suggestCommand("/msg " + target.getName() + " "));
   }

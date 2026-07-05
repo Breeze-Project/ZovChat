@@ -30,6 +30,9 @@ public class ChatService {
   private static final float MENTION_SOUND_VOLUME = 1.0f;
   private static final float MENTION_SOUND_PITCH = 1.0f;
 
+  private static final int TICKS_PER_SECOND = 20;
+  private static final int SECONDS_PER_HOUR = 3600;
+
   private final Plugin plugin;
   private final MessageFormatter messageFormatter;
   private final ConfigManager configManager;
@@ -134,7 +137,7 @@ public class ChatService {
 
   private long getPlayTimeHours(Player sender) {
     int ticks = sender.getStatistic(Statistic.PLAY_ONE_MINUTE);
-    return ticks / (20 * 3600);
+    return ticks / (TICKS_PER_SECOND * SECONDS_PER_HOUR);
   }
 
   private void broadcastMessage(Player sender, Component message, String plainContent, boolean isGlobal) {
