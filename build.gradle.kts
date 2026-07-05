@@ -26,6 +26,7 @@ dependencies {
   compileOnly("me.clip:placeholderapi:2.12.2")
   compileOnly("com.discordsrv:discordsrv:1.28.0")
   compileOnly("com.github.DevLeoko.AdvancedBan:AdvancedBan-Bukkit:v2.3.0")
+  compileOnly("com.github.Breeze-Project:Clan-plugin:-SNAPSHOT")
 }
 
 java {

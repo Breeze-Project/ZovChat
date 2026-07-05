@@ -16,6 +16,9 @@ dependencies:
     AdvancedBan:
       load: BEFORE
       required: false
+    CustomClanBreeze:
+      load: BEFORE
+      required: false
 
 permissions:
   zovchat.adminchat:

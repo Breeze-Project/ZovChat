@@ -5,8 +5,10 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.hxragi.chat.command.commands.ChatSettingsCommand;
+import dev.hxragi.chat.command.commands.ClanChatCommand;
 import dev.hxragi.chat.command.commands.PmCommand;
 import dev.hxragi.chat.command.commands.ReplyCommand;
+import dev.hxragi.chat.service.ClanChatService;
 import dev.hxragi.chat.service.ReplyService;
 import dev.hxragi.chat.settings.SettingsManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -15,11 +17,13 @@ public class CommandManager {
   private final JavaPlugin plugin;
   private final ReplyService replyService;
   private final SettingsManager settingsManager;
+  private final ClanChatService clanChatService;
 
-  public CommandManager(JavaPlugin plugin, ReplyService replyService, SettingsManager settingsManager) {
+  public CommandManager(JavaPlugin plugin, ReplyService replyService, SettingsManager settingsManager, ClanChatService clanChatService) {
     this.plugin = plugin;
     this.replyService = replyService;
     this.settingsManager = settingsManager;
+    this.clanChatService = clanChatService;
   }
 
   public void registerAll() {
@@ -32,6 +36,8 @@ public class CommandManager {
           List.of("reply"));
       registrar.register(new ChatSettingsCommand(settingsManager).create(), "Настройки чата",
           List.of("chatsettings", "cs"));
+      registrar.register(new ClanChatCommand(clanChatService).create(), "Отправить сообщение в клановый чат",
+          List.of("cchat"));
     });
   }
 }

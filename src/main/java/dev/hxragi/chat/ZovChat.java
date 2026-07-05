@@ -12,6 +12,7 @@ import dev.hxragi.chat.listener.ChatSettingsGUIListener;
 import dev.hxragi.chat.listener.PlayerJoinListener;
 import dev.hxragi.chat.listener.PlayerQuitListener;
 import dev.hxragi.chat.service.ChatService;
+import dev.hxragi.chat.service.ClanChatService;
 import dev.hxragi.chat.service.MessageFormatter;
 import dev.hxragi.chat.service.ReplyService;
 import dev.hxragi.chat.settings.SettingsManager;
@@ -34,6 +35,7 @@ public class ZovChat extends JavaPlugin {
     MessageFormatter messageFormatter = new MessageFormatter(configManager);
     ChatService chatService = new ChatService(this, messageFormatter, configManager, settingsManager, advancedBanHook);
     ReplyService replyService = new ReplyService(settingsManager, advancedBanHook);
+    ClanChatService clanChatService = new ClanChatService(configManager, messageFormatter, chatService, advancedBanHook);
 
     getServer().getPluginManager().registerEvents(new ChatListener(chatService), this);
     getServer().getPluginManager().registerEvents(new ChatSettingsGUIListener(settingsManager), this);
@@ -42,7 +44,7 @@ public class ZovChat extends JavaPlugin {
 
     this.discordSRVHook = new DiscordSRVHook(this, settingsManager, configManager);
 
-    CommandManager commandManager = new CommandManager(this, replyService, settingsManager);
+    CommandManager commandManager = new CommandManager(this, replyService, settingsManager, clanChatService);
     commandManager.registerAll();
   }
 

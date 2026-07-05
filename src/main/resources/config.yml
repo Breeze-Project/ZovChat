@@ -5,6 +5,7 @@ chat:
   formats:
     global: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <white><message>"
     local: "%luckperms_prefix%<gray><player><reset>%ccb_tag%<gray>: <gray><message>"
+    clan: "%luckperms_prefix%<dark_green><player><reset>%ccb_tag%<gray>: <green><message>"
 
   adminChat:
     symbol: "#"
@@ -14,6 +15,6 @@ chat:
 mention:
   color: "<gold>"
 
-database: 
+database:
   name: "database.db"
   poolSize: 1
