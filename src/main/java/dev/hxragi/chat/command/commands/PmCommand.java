@@ -24,7 +24,12 @@ public class PmCommand {
         .requires(source -> source.getSender() instanceof Player)
         .then(Commands.argument("target", StringArgumentType.word())
             .suggests((context, builder) -> {
-              Bukkit.getOnlinePlayers().stream().map(Player::getName).forEach(builder::suggest);
+              String remaining = builder.getRemaining().toLowerCase();
+
+              Bukkit.getOnlinePlayers().stream()
+                .map(Player::getName)
+                .filter(name -> name.toLowerCase().startsWith(remaining))
+                .forEach(builder::suggest);
               return builder.buildFuture();
             })
             .then(Commands.argument("message", StringArgumentType.greedyString())
