@@ -25,7 +25,7 @@ public class PlayerJoinListener implements Listener {
   public void onPlayerJoin(PlayerJoinEvent event) {
     settingsManager.preloadSettings(event.getPlayer().getUniqueId());
 
-    TagResolver playerResolver = TagResolver.resolver("player", Tag.inserting(Component.text(event.getPlayer().getName())));
+    TagResolver playerResolver = TagResolver.resolver("player", Tag.selfClosingInserting(Component.text(event.getPlayer().getName())));
     Component joinMessage = miniMessage.deserialize(configManager.joinFormat(), playerResolver);
 
     event.joinMessage(joinMessage);

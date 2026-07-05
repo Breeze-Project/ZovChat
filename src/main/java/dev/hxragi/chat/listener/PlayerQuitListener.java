@@ -32,7 +32,7 @@ public class PlayerQuitListener implements Listener {
     settingsManager.removeFromCache(playerId);
     replyService.clearLastSender(playerId);
 
-    TagResolver playerResolver = TagResolver.resolver("player", Tag.inserting(Component.text(event.getPlayer().getName())));
+    TagResolver playerResolver = TagResolver.resolver("player", Tag.selfClosingInserting(Component.text(event.getPlayer().getName())));
     Component quitMessage = miniMessage.deserialize(configManager.quitFormat(), playerResolver);
 
     event.quitMessage(quitMessage);

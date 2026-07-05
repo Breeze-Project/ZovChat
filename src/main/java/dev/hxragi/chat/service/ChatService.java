@@ -118,8 +118,8 @@ public class ChatService {
 
     format = LegacyConverter.convert(format);
 
-    TagResolver playerResolver = TagResolver.resolver("player", Tag.inserting(buildSenderName(sender)));
-    TagResolver messageResolver = TagResolver.resolver("message", Tag.inserting(message));
+    TagResolver playerResolver = TagResolver.resolver("player", Tag.selfClosingInserting(buildSenderName(sender)));
+    TagResolver messageResolver = TagResolver.resolver("message", Tag.selfClosingInserting(message));
 
     return miniMessage.deserialize(format, playerResolver, messageResolver);
   }

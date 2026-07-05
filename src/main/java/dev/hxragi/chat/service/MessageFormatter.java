@@ -32,12 +32,10 @@ public class MessageFormatter {
   private static final Pattern NON_ALPHANUMERIC_PATTERN = Pattern.compile("[^a-zA-Z0-9_]");
 
   private final MiniMessage miniMessage = MiniMessage.builder().strict(false).build();
-  private final ConfigManager configManager;
 
   private final String mentionColor;
 
   public MessageFormatter(ConfigManager configManager) {
-    this.configManager = configManager;
     this.mentionColor = LegacyConverter.convert(configManager.mentionColor());
   }
 
@@ -52,9 +50,9 @@ public class MessageFormatter {
       String targetName = queue.popOr("A player name is required").value();
       Player target = Bukkit.getPlayerExact(targetName);
       if (target != null) {
-        return Tag.inserting(createMentionComponent(target));
+        return Tag.selfClosingInserting(createMentionComponent(target));
       }
-      return Tag.inserting(Component.text(targetName));
+      return Tag.selfClosingInserting(Component.text(targetName));
     });
 
     String finalString = LegacyConverter.convert(processedContent.toString().trim());
